@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from "express";
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
-import request from "request";
 import fetch from "node-fetch";
 
 const app: Express = express();
