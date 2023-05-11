@@ -3,7 +3,7 @@ import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import fetch from "node-fetch";
 
 const app: Express = express();
-const port = 3001;
+const port = 80;
 
 interface Line {
   [key: string]: string;
