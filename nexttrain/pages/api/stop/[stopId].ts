@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import fetch from "node-fetch";
 
+// @ts-ignore: Object is possibly 'null'.
+
+
 interface Line {
   [key: string]: string;
 }
@@ -28,11 +31,11 @@ const lines: Line = {
   R: "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw",
 };
 
-async function handleRequest(stopId: string): Promise<TimeToArrival[]> {
+async function handleRequest(stopId: string, apiKey: string): Promise<TimeToArrival[]> {
   const arrivalTimes = await Promise.all(
     stops[stopId].lines.map((line) => {
       const url = lines[line];
-      return queryMTA(url, stopId);
+      return queryMTA(url, stopId, apiKey);
     })
   );
   return Promise.resolve(
@@ -40,7 +43,7 @@ async function handleRequest(stopId: string): Promise<TimeToArrival[]> {
   );
 }
 
-async function queryMTA(url: string, stopId: string): Promise<TimeToArrival[]> {
+async function queryMTA(url: string, stopId: string, apiKey: string): Promise<TimeToArrival[]> {
   const arrivalTimes: TimeToArrival[] = [];
   const now = new Date();
 
@@ -60,16 +63,16 @@ async function queryMTA(url: string, stopId: string): Promise<TimeToArrival[]> {
   feed.entity.forEach((entity) => {
     if (
       entity.tripUpdate &&
-      Object.keys(lines).includes(entity.tripUpdate.trip.routeId)
+      Object.keys(lines).includes(entity.tripUpdate.trip.routeId!)
     ) {
-      entity.tripUpdate.stopTimeUpdate
+      entity.tripUpdate.stopTimeUpdate!
         .filter((update) => update.stopId === stopId)
         .forEach((update) => {
           if (update.stopId === stopId) {
-            const time = new Date(Number(update.departure.time) * 1000);
+            const time = new Date(Number(update.departure!.time) * 1000);
             const diff = Math.trunc((time.getTime() - now.getTime()) / 60000);
             const arrivalTime: TimeToArrival = {
-              line: entity.tripUpdate.trip.routeId,
+              line: entity.tripUpdate!.trip.routeId!,
               mins: diff,
             };
             //console.log(arrivalTime)
@@ -82,11 +85,13 @@ async function queryMTA(url: string, stopId: string): Promise<TimeToArrival[]> {
 }
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
   const query = req.query;
   const { stopId } = query;
-  handleRequest(stopId).then((arr) => {
+  const apiKey = process.env.MTA_API_KEY;
+
+  handleRequest(stopId as string, apiKey!).then((arr) => {
     console.log(arr)
     res.status(200).json(arr);
   }).catch((error) => {
