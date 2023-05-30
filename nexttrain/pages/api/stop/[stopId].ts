@@ -13,10 +13,6 @@ interface Stop {
     lines: Array<string>;
   };
 }
-interface TimeToArrival {
-  line: string;
-  mins: number;
-}
 
 const stops: Stop = {
   G21S: { name: "Queens Plaza", lines: ["E", "M", "R"] },
