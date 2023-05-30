@@ -4,7 +4,6 @@ import fetch from "node-fetch";
 
 // @ts-ignore: Object is possibly 'null'.
 
-
 interface Line {
   [key: string]: string;
 }
@@ -31,7 +30,10 @@ const lines: Line = {
   R: "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw",
 };
 
-async function handleRequest(stopId: string, apiKey: string): Promise<TimeToArrival[]> {
+async function handleRequest(
+  stopId: string,
+  apiKey: string
+): Promise<TimeToArrival[]> {
   const arrivalTimes = await Promise.all(
     stops[stopId].lines.map((line) => {
       const url = lines[line];
@@ -43,7 +45,11 @@ async function handleRequest(stopId: string, apiKey: string): Promise<TimeToArri
   );
 }
 
-async function queryMTA(url: string, stopId: string, apiKey: string): Promise<TimeToArrival[]> {
+async function queryMTA(
+  url: string,
+  stopId: string,
+  apiKey: string
+): Promise<TimeToArrival[]> {
   const arrivalTimes: TimeToArrival[] = [];
   const now = new Date();
 
@@ -65,8 +71,8 @@ async function queryMTA(url: string, stopId: string, apiKey: string): Promise<Ti
       entity.tripUpdate &&
       Object.keys(lines).includes(entity.tripUpdate.trip.routeId!)
     ) {
-      entity.tripUpdate.stopTimeUpdate!
-        .filter((update) => update.stopId === stopId)
+      entity.tripUpdate
+        .stopTimeUpdate!.filter((update) => update.stopId === stopId)
         .forEach((update) => {
           if (update.stopId === stopId) {
             const time = new Date(Number(update.departure!.time) * 1000);
@@ -83,19 +89,18 @@ async function queryMTA(url: string, stopId: string, apiKey: string): Promise<Ti
   });
   return arrivalTimes;
 }
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const query = req.query;
   const { stopId } = query;
   const apiKey = process.env.MTA_API_KEY;
 
-  handleRequest(stopId as string, apiKey!).then((arr) => {
-    console.log(arr)
-    res.status(200).json(arr);
-  }).catch((error) => {
-    console.log('errrrrrr')
-    res.status(500).json({"error": error})
-  });
+  handleRequest(stopId as string, apiKey!)
+    .then((arr) => {
+      console.log(arr);
+      res.status(200).json(arr);
+    })
+    .catch((error) => {
+      console.log("errrrrrr");
+      res.status(500).json({ error: error });
+    });
 }
