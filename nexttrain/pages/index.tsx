@@ -11,7 +11,7 @@ import ListItemText from "@mui/material/ListItemText";
 
 import Image from "next/image";
 import TrainIcon from "@mui/icons-material/Train";
-import { ReactComponent as EIcon } from "../public/e-letter.svg";
+import TimeToArrival from "../components/time-to-arrival";
 
 const HomePage: React.FC = () => {
   const stops = [
@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
     { name: "Penn St", id: "A28N" },
   ];
   const [value, setValue] = React.useState(0);
-  const [trainTimes, setTrainTimes] = React.useState([]);
+  const [trainTimes, setTrainTimes] = React.useState<TimeToArrival[]>([]);
 
   const fetchData = async (stop: string) => {
     const res = await fetch(`/api/stop/${stop}`);
@@ -59,13 +59,14 @@ const HomePage: React.FC = () => {
             justifyContent="center"
           >
             <List>
-              {trainTimes.map((time, _) => (
-                <ListItem disablePadding>
-                  <img
+              {trainTimes.map((time, idx) => (
+                <ListItem disablePadding key={idx}>
+                  <Image
                     src={`/${time.line}-letter.svg`}
+                    alt={time.line}
+                    width="20"
+                    height="20"
                     style={{
-                      height: "20px",
-                      width: "20px",
                       "padding-right": "5px",
                     }}
                   />

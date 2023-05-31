@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import fetch from "node-fetch";
+import TimeToArrival from "../../../components/time-to-arrival";
 
 // @ts-ignore: Object is possibly 'null'.
 
@@ -55,7 +56,7 @@ async function queryMTA(
     },
   });
   if (!res.ok) {
-    console.log(`ERROR: ${res.body}`);
+    console.log(`ERROR: ${JSON.stringify(res.body)}`);
     process.exit(1);
   }
   const buffer = await res.arrayBuffer();
