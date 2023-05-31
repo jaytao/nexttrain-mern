@@ -25,7 +25,6 @@ const HomePage: React.FC = () => {
   const fetchData = async (stop: string) => {
     const res = await fetch(`/api/stop/${stop}`);
     const data: TimeToArrival[] = await res.json();
-    console.log(data);
     setTrainTimes(data);
   };
 
@@ -52,8 +51,8 @@ const HomePage: React.FC = () => {
         ))}
       </BottomNavigation>
       <Grid container columnSpacing={3}>
-        <Grid item xs={4}></Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5}></Grid>
+        <Grid item xs={2}>
           <Box
             sx={{ width: "100%", bgcolor: "background.paper" }}
             alignItems="center"
@@ -62,14 +61,21 @@ const HomePage: React.FC = () => {
             <List>
               {trainTimes.map((time, _) => (
                 <ListItem disablePadding>
-                  <Image src={EIcon} />
-                  <ListItemText primary={`${time.line} ${time.mins}`} />
+                  <img
+                    src={`/${time.line}-letter.svg`}
+                    style={{
+                      height: "20px",
+                      width: "20px",
+                      "padding-right": "5px",
+                    }}
+                  />
+                  <ListItemText primary={`${time.mins}`} />
                 </ListItem>
               ))}
             </List>
           </Box>
         </Grid>
-        <Grid item xs={4}></Grid>
+        <Grid item xs={7}></Grid>
       </Grid>
     </div>
   );

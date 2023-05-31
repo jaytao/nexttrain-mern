@@ -77,7 +77,6 @@ async function queryMTA(
               line: entity.tripUpdate!.trip.routeId!,
               mins: diff,
             };
-            //console.log(arrivalTime)
             arrivalTimes.push(arrivalTime);
           }
         });
@@ -92,11 +91,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   handleRequest(stopId as string, apiKey!)
     .then((arr) => {
-      console.log(arr);
       res.status(200).json(arr);
     })
     .catch((error) => {
-      console.log("errrrrrr");
       res.status(500).json({ error: error });
     });
 }
