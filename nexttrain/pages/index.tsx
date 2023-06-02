@@ -66,9 +66,7 @@ const HomePage: React.FC = () => {
                     alt={time.line}
                     width="20"
                     height="20"
-                    style={{
-                      "padding-right": "5px",
-                    }}
+                    style={{"padding-right": "5px"} as React.CSSProperties }
                   />
                   <ListItemText primary={`${time.mins}`} />
                 </ListItem>
