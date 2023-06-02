@@ -90,6 +90,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { stopId } = query;
   const apiKey = process.env.MTA_API_KEY;
 
+  if (apiKey == null) {
+    res.status(500).json({error: "MTA_API_KEY not found"})
+    return
+  }
   handleRequest(stopId as string, apiKey!)
     .then((arr) => {
       res.status(200).json(arr);
