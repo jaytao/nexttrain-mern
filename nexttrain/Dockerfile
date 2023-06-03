@@ -1,18 +1,17 @@
 # Use the official Node.js 14 image as the base
-#FROM node:current-alpine3.17
-FROM node:20
+FROM node:current-alpine3.17
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy the package.json and package-lock.json files to the working directory
-COPY nexttrain/package*.json ./
+COPY package*.json ./
 
 # Install the project dependencies
 RUN npm install
 
 # Copy the application code to the working directory
-COPY nexttrain .
+COPY . .
 
 # Build the Next.js application
 RUN npm run build
