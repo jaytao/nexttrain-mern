@@ -39,7 +39,10 @@ async function handleRequest(
   );
   return Promise.resolve(
     arrivalTimes.flatMap((arr) => arr).sort((a, b) => a.mins - b.mins)
-  );
+  ).catch((err) => {
+    console.log("in handleRequest");
+    throw new Error(err);
+  });
 }
 
 async function queryMTA(
@@ -56,8 +59,9 @@ async function queryMTA(
     },
   });
   if (!res.ok) {
-    console.log(`ERROR: ${JSON.stringify(res.body)}`);
-    process.exit(1);
+    const msg = JSON.stringify(res);
+    console.log(`in queryMTA: ${msg}`);
+    throw new Error(msg);
   }
   const buffer = await res.arrayBuffer();
   const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
@@ -91,14 +95,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const apiKey = process.env.MTA_API_KEY;
 
   if (apiKey == null) {
-    res.status(500).json({error: "MTA_API_KEY not found"})
-    return
+    res.status(500).json({ error: "MTA_API_KEY not found" });
+    return;
   }
   handleRequest(stopId as string, apiKey!)
     .then((arr) => {
       res.status(200).json(arr);
     })
     .catch((error) => {
-      res.status(500).json({ error: error });
+      res.status(500).end(error.toString());
     });
 }
