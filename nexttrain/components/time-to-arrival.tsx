@@ -1,4 +1,4 @@
-  export default interface TimeToArrival {
-    line: string;
-    mins: number;
-  }
+export default interface TimeToArrival {
+  line: string;
+  mins: number;
+}

@@ -12,6 +12,9 @@ import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
 import TrainIcon from "@mui/icons-material/Train";
 import TimeToArrival from "../components/time-to-arrival";
+import ELineSvg from "../public/e-letter.svg";
+import RLineSvg from "../public/r-letter.svg";
+import MLineSvg from "../public/m-letter.svg";
 
 const HomePage: React.FC = () => {
   const stops = [
@@ -26,6 +29,20 @@ const HomePage: React.FC = () => {
     const res = await fetch(`/api/stop/${stop}`);
     const data: TimeToArrival[] = await res.json();
     setTrainTimes(data);
+  };
+
+  const getImage = (line: string) => {
+    switch (line) {
+      case "E": {
+        return ELineSvg;
+      }
+      case "R": {
+        return RLineSvg;
+      }
+      case "M": {
+        return MLineSvg;
+      }
+    }
   };
 
   React.useEffect(() => {
@@ -62,13 +79,13 @@ const HomePage: React.FC = () => {
               {trainTimes.map((time, idx) => (
                 <ListItem disablePadding key={idx}>
                   <Image
-                    src={`/${time.line}-letter.svg`}
+                    src={getImage(time.line)}
                     alt={time.line}
                     width="20"
                     height="20"
                     style={{ "padding-right": "5px" } as React.CSSProperties}
                   />
-                  <ListItemText primary={`[${time.line}] ${time.mins}`} />
+                  <ListItemText primary={time.mins} />
                 </ListItem>
               ))}
             </List>
